@@ -1,0 +1,235 @@
+cat
+
+ //GETTING SEG FAULT HERE, CHECKING BACK TOMORROW
+    int bucket=hash(text_word);
+    //creting temp node
+    node *temp=malloc(sizeof(node));
+    strcpy(temp->word, table[bucket]->word);
+    temp->next=table[bucket]->next;
+    while(strcasecmp(temp->word, text_word) !=0)
+    {
+        strcpy(temp->word, temp->next->word);
+        temp->next=temp->next->next;
+    }
+    if(strcasecmp(temp->word, text_word) !=0)
+    {
+    free(temp);
+    printf("found\n");
+    return true;
+    }
+    free(temp);
+    printf("not found\n");
+    return false;
+    
+    
+    //next temp lol 
+    
+    unsigned int bucket= hash(text_word);
+   printf("%s goes in bucket %i(%s)\n", text_word, bucket, table[bucket]->word);
+   //check that there's something in the hashtable
+   if(table[bucket]==NULL)
+   {
+       printf("%s not found\n", text_word);
+       return false;
+   }
+   node *temp=malloc(sizeof(node));
+   temp=table[bucket];
+   //check if there's enough room in memory
+   if(temp==NULL)
+   {
+       printf("memory error\n");
+       return false;
+   }
+   strcpy(temp->word, table[bucket]->word);
+   temp->next=table[bucket]->next;
+   while(strcasecmp(temp->word, text_word)!=0 && temp->next != NULL)
+   {
+       printf("temp next is %i\n", (int)temp->next);
+       strcpy(temp->word, (temp->next)->word);
+       temp=temp->next;
+       printf("temp next is now %i\n", (int)temp->next);
+   }
+   if(temp->next==NULL)
+   {
+       printf("%s not found\n", text_word);
+       free(temp);
+       return false;
+   }
+   printf("%s found\n", text_word);
+   free(temp);
+   return true;
+   
+   
+   //STARTING OVER OUCH
+   
+   // Implements a dictionary's functionality
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+# include <strings.h>
+
+#include "dictionary.h"
+
+//global variable
+int word_count=0;
+// Represents a node in a hash table
+typedef struct node
+{
+    char word[LENGTH + 1];
+    struct node *next;
+}
+node;
+
+// Number of buckets in hash table
+const unsigned int N = 26;
+
+// Hash table
+node *table[N];
+
+// Returns true if word is in dictionary else false
+bool check(const char *text_word)
+{
+    unsigned int bucket= hash(text_word);
+    node *n=table[bucket];
+    int j=0;
+    printf("bucket for %s is %i(%s), whose next is %i\n", text_word, bucket, table[bucket]->word, (int)n->next);
+    printf("bucket for %s is %i(%s), whose next word is %s and whose next next word is %s\n", text_word, bucket, table[bucket]->word, table[bucket]->next->word, table[bucket]->next->next->word);
+    printf("count is %i\n", j);
+    exit(0);
+    
+}
+
+// Hashes word to a number
+unsigned int hash(const char *word)
+{
+    //if word begins with uppercase
+    if(word[0]<97)
+    {
+        unsigned int upper_index=word[0]-65;
+        return upper_index;
+    }
+    unsigned int bucket_index=word[0]-97;
+    //printf("bucket for word %s is %u\n", word, bucket_index);
+    return bucket_index;
+}
+
+// Loads dictionary into memory, returning true if successful else false
+bool load(const char *dictionary)
+{
+    //variables
+    char dict_word[LENGTH+1];
+    node *n;
+    //opening dict file
+    FILE *fp;
+    fp = fopen(dictionary, "r");
+    //checking that load is successful
+    if(fp==NULL)
+    {
+        return false;
+    }
+    //loop through entire document, load each word
+    while(fscanf(fp, "%s", dict_word) != EOF)
+    {
+        //hash each word
+        int bucket=hash(dict_word);
+        //create new node
+        n=malloc(sizeof(node));
+        //check that there's enough memory
+        if(n==NULL)
+        {
+            return false;
+        }
+        //update new node
+        strcpy(n->word, dict_word);
+        n->next=NULL;
+        word_count++;
+        //if first word in bucket
+        if(table[bucket]==NULL)
+        {
+            table[bucket]=n;
+            //printf("word is %s next is %d\n", table[bucket]->word, (int)table[bucket]->next);
+        }
+        //if not first word in bucket, make first new word, then attatch old one
+        else
+        {
+            table[bucket]->next=NULL;
+            n->next= table[bucket];
+            table[bucket]=n;
+            //printf("new word, %s, added, with next word of %s\n", table[bucket] )
+            // printf("word is %s next is %d\n", table[bucket]->word, (int)table[bucket]->next);
+            // printf("next word is %s\n", n->next->word);
+        }
+        //printf("word no. %i is %s\n", word_count, table[bucket]->word);
+    }
+    return true;
+}
+
+// Returns number of words in dictionary if loaded else 0 if not yet loaded
+unsigned int size(void)
+{
+    //printf("word count is %i\n", word_count);
+    return word_count;
+}
+
+// Unloads dictionary from memory, returning true if successful else false
+bool unload(void)
+{
+    // TODO
+    return false;
+}
+// starting over again 
+
+//variables
+    FILE *fp=fopen(dictionary, "r");
+    if(fp==NULL)
+    {
+        printf("error\n");
+        return false;
+    }
+    char *word=malloc(sizeof(LENGTH));
+    node *temp=malloc(sizeof(node));
+    if(temp==NULL)
+    {   
+        printf("memory error\n");
+        return false;
+    }        
+    //create table
+    while (fscanf(fp, "%s", word)!= EOF)
+    {
+        unsigned int bucket=hash(word);
+        //if first word in linked list
+        if(table[bucket]==NULL)
+        {
+            strcpy(temp->word, word);
+            temp->next=NULL;
+            table[bucket]=temp;
+            node *tablebucket=table[bucket];
+        }
+        else
+        {
+            strcpy(temp->word, word);
+            temp->next=table[bucket];
+            table[bucket]=temp;
+            node *tablebucket=table[bucket];
+        }
+    }
+    //DEBUGGING LOOP
+    temp=table[0];
+    //THIS LOOP FINDS THAT THE "A" IS REPLACED WITH THE LAST WORD IN ENTRY Z. WHY? 
+    for(int i=0;i<9128; i++)
+    {
+        
+        printf("word in %i position is %s\n",i, temp->word);
+        temp=temp->next;
+        
+    }
+    // printf("count is %i\n", counter);
+    free(temp);
+    exit(0);
+    return true;
+
+}
+
+///this check function ALMOST works 
